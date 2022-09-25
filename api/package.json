@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "server": "DEBUG=api:* npm start"
+    "server": "DEBUG=api:* nodemon npm start"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -13,6 +13,7 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
     "pug": "2.0.0-beta11",
     "sequelize": "^5.21.2",
     "sequelize-cli": "^5.5.1"
