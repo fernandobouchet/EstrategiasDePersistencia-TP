@@ -5,7 +5,14 @@ const models = require('../models');
 router.get('/', (req, res) => {
   models.alumno
     .findAll({
-      attributes: ['id_carrera', 'nombre'],
+      attributes: ['id', 'id_carrera', 'nombre'],
+      include: [
+        {
+          as: 'carrera',
+          model: models.carrera,
+          attributes: ['nombre'],
+        },
+      ],
     })
     .then((alumnos) => res.send(alumnos))
     .catch(() => res.sendStatus(500));
