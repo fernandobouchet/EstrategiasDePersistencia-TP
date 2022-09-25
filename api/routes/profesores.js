@@ -6,6 +6,13 @@ router.get('/', (req, res) => {
   models.profesor
     .findAll({
       attributes: ['id', 'id_materia', 'nombre'],
+      include: [
+        {
+          as: 'materias',
+          model: models.materia,
+          attributes: ['nombre', 'id_carrera'],
+        },
+      ],
     })
     .then((profesors) => res.send(profesors))
     .catch(() => res.sendStatus(500));
@@ -15,7 +22,7 @@ router.post('/', (req, res) => {
   models.profesor
     .create({
       nombre: req.body.nombre,
-      id_carrera: req.body.id_carrera,
+      id_materia: req.body.id_materia,
     })
     .then((profesor) => res.status(201).send({ id: profesor.id }))
     .catch((error) => {
