@@ -9,11 +9,10 @@ module.exports = (sequelize, DataTypes) => {
     {}
   );
   materia.associate = function (models) {
-    materia.belongsTo(models.carrera),
-      {
-        as: 'Carrera',
-        foreignKey: 'id_carrera',
-      };
+    materia.belongsTo(models.carrera, {
+      as: 'Carrera',
+      foreignKey: 'id_carrera',
+    });
   };
   return materia;
 };
