@@ -44,6 +44,19 @@ const findMateria = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
+router.get('/filtro', (req, res) => {
+  let offset = parseInt(req.query.pagActual);
+  let limit = parseInt(req.query.cantAVer);
+
+  models.materia
+    .findAll({
+      offset: offset * limit,
+      limit: limit,
+    })
+    .then((materias) => res.send(materias))
+    .catch(() => res.sendStatus(500));
+});
+
 router.get('/:id', (req, res) => {
   findMateria(req.params.id, {
     onSuccess: (materia) => res.send(materia),
