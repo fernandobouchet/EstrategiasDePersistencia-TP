@@ -47,6 +47,19 @@ const findProfesor = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
+router.get('/filtro', (req, res) => {
+  let offset = parseInt(req.query.pagActual);
+  let limit = parseInt(req.query.cantAVer);
+
+  models.profesor
+    .findAll({
+      offset: offset * limit,
+      limit: limit,
+    })
+    .then((profesores) => res.send(profesores))
+    .catch(() => res.sendStatus(500));
+});
+
 router.get('/:id', (req, res) => {
   findProfesor(req.params.id, {
     onSuccess: (profesor) => res.send(profesor),

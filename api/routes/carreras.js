@@ -45,6 +45,19 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
+router.get('/filtro', (req, res) => {
+  let offset = parseInt(req.query.pagActual);
+  let limit = parseInt(req.query.cantAVer);
+
+  models.carrera
+    .findAll({
+      offset: offset * limit,
+      limit: limit,
+    })
+    .then((carreras) => res.send(carreras))
+    .catch(() => res.sendStatus(500));
+});
+
 router.get('/:id', (req, res) => {
   findCarrera(req.params.id, {
     onSuccess: (carrera) => res.send(carrera),

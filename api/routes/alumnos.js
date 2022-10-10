@@ -47,6 +47,19 @@ const findAlumno = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
+router.get('/filtro', (req, res) => {
+  let offset = parseInt(req.query.pagActual);
+  let limit = parseInt(req.query.cantAVer);
+
+  models.alumno
+    .findAll({
+      offset: offset * limit,
+      limit: limit,
+    })
+    .then((alumnos) => res.send(alumnos))
+    .catch(() => res.sendStatus(500));
+});
+
 router.get('/:id', (req, res) => {
   findAlumno(req.params.id, {
     onSuccess: (alumno) => res.send(alumno),
