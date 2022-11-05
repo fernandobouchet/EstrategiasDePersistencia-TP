@@ -16,8 +16,11 @@ const encontrarYVerificarUsuario = (
       attributes: ['id', 'nombre', 'clave'],
       where: { nombre },
     })
-    .then(async (usuario) => await bcrypt.compare(clave, usuario.clave))
-    .then((usuario) => (usuario ? onSuccess(usuario) : onNotFound()))
+    .then(async (usuario) =>
+      (await bcrypt.compare(clave, usuario.clave))
+        ? onSuccess(usuario)
+        : onNotFound()
+    )
     .catch(() => onError());
 };
 

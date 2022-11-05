@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const { protejer } = require('./middleware/autentificacionMiddleware');
 
 const app = express();
 
@@ -17,10 +18,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/carrera', require('./routes/carreras'));
-app.use('/materia', require('./routes/materias'));
-app.use('/alumno', require('./routes/alumnos'));
-app.use('/profesor', require('./routes/profesores'));
+app.use('/carrera', protejer, require('./routes/carreras'));
+app.use('/materia', protejer, require('./routes/materias'));
+app.use('/alumno', protejer, require('./routes/alumnos'));
+app.use('/profesor', protejer, require('./routes/profesores'));
 app.use('/usuario', require('./routes/usuarios'));
 
 // catch 404 and forward to error handler
