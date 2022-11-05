@@ -22,7 +22,9 @@ const obtenerCarreras = (req, res) => {
         },
       ],
     })
-    .then((carreras) => res.send(carreras))
+    .then((carreras) => {
+      res.send(carreras);
+    })
     .catch(() => res.sendStatus(500));
 };
 

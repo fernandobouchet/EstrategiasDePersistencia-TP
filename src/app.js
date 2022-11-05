@@ -17,10 +17,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/car', require('./routes/carreras'));
-app.use('/mat', require('./routes/materias'));
-app.use('/alu', require('./routes/alumnos'));
-app.use('/pro', require('./routes/profesores'));
+app.use('/carrera', require('./routes/carreras'));
+app.use('/materia', require('./routes/materias'));
+app.use('/alumno', require('./routes/alumnos'));
+app.use('/profesor', require('./routes/profesores'));
+app.use('/usuario', require('./routes/usuarios'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
