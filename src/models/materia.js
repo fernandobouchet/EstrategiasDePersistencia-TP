@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
   const materia = sequelize.define(
-    'materia',
+    "materia",
     {
-      nombre: DataTypes.STRING,
+      nombre: { type: DataTypes.STRING, unique: true },
       id_carrera: DataTypes.INTEGER,
     },
     {}
   );
   materia.associate = function (models) {
     materia.belongsTo(models.carrera, {
-      as: 'Carrera',
-      foreignKey: 'id_carrera',
+      as: "Carrera",
+      foreignKey: "id_carrera",
     });
   };
   return materia;

@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
   const carrera = sequelize.define(
-    'carrera',
+    "carrera",
     {
-      nombre: DataTypes.STRING,
+      nombre: { type: DataTypes.STRING, unique: true },
     },
     {}
   );
   carrera.associate = function (models) {
     carrera.hasMany(models.materia, {
-      as: 'materias',
-      foreignKey: 'id_carrera',
+      as: "materias",
+      foreignKey: "id_carrera",
     });
   };
 
