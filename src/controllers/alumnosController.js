@@ -1,10 +1,12 @@
-const models = require('../models');
+const models = require("../models");
+const { validationResult } = require("express-validator");
+const { obtenerMensajeDeError } = require("../utils/validatorErrorUtils");
 
 const encontrarAlumno = (id, { onSuccess, onNotFound, onError }) => {
   models.alumno
     .findOne({
-      attributes: ['id', 'nombre', 'id_carrera'],
-      where: { id },
+      attributes: ["id", "nombre", "id_carrera"],
+      where: { id: id },
     })
     .then((alumno) => (alumno ? onSuccess(alumno) : onNotFound()))
     .catch(() => onError());
@@ -13,12 +15,12 @@ const encontrarAlumno = (id, { onSuccess, onNotFound, onError }) => {
 const obtenerAlumnos = (req, res) => {
   models.alumno
     .findAll({
-      attributes: ['id', 'id_carrera', 'nombre'],
+      attributes: ["id", "id_carrera", "nombre"],
       include: [
         {
-          as: 'carrera',
+          as: "carrera",
           model: models.carrera,
-          attributes: ['nombre'],
+          attributes: ["nombre"],
         },
       ],
     })
@@ -27,27 +29,36 @@ const obtenerAlumnos = (req, res) => {
 };
 
 const crearAlumno = (req, res) => {
-  models.alumno
-    .create({
-      nombre: req.body.nombre,
-      id_carrera: req.body.id_carrera,
-    })
-    .then((alumno) => res.status(201).send({ id: alumno.id }))
-    .catch((error) => {
-      if (error == 'SequelizeUniqueConstraintError: Validation error') {
-        res
-          .status(400)
-          .send('Bad request: existe otro alumno con el mismo nombre');
-      } else {
-        console.log(`Error al intentar insertar en la base de datos: ${error}`);
-        res.sendStatus(500);
-      }
-    });
+  let errors = validationResult(req);
+  try {
+    validationResult(req).throw();
+    models.alumno
+      .create({
+        nombre: req.body.nombre,
+        id_carrera: req.body.id_carrera,
+      })
+      .then((alumno) => res.status(201).send({ id: alumno.id }))
+      .catch((error) => {
+        if (error == "SequelizeUniqueConstraintError: Validation error") {
+          res
+            .status(400)
+            .send("Bad request: existe otro alumno con el mismo nombre");
+        } else {
+          console.log(
+            `Error al intentar insertar en la base de datos: ${error}`
+          );
+          res.sendStatus(500);
+        }
+      });
+  } catch (err) {
+    res.status(400);
+    res.send(obtenerMensajeDeError(errors));
+  }
 };
 
 const obtenerYFiltrarAlumnos = (req, res) => {
-  let offset = parseInt(req.query.pagActual);
-  let limit = parseInt(req.query.cantAVer);
+  let offset = parseInt(req.query.pagActual) || 0;
+  let limit = parseInt(req.query.cantAVer) || 10;
 
   models.alumno
     .findAll({
@@ -61,33 +72,43 @@ const obtenerYFiltrarAlumnos = (req, res) => {
 const obtenerUnAlumno = (req, res) => {
   encontrarAlumno(req.params.id, {
     onSuccess: (alumno) => res.send(alumno),
-    onNotFound: () => res.sendStatus(404),
+    onNotFound: () => res.status(404).send("Alumno no encontrado"),
     onError: () => res.sendStatus(500),
   });
 };
 
 const actualizarAlumno = (req, res) => {
-  const onSuccess = (alumno) =>
-    alumno
-      .update({ nombre: req.body.nombre }, { fields: ['nombre', 'id_carrera'] })
-      .then(() => res.sendStatus(200))
-      .catch((error) => {
-        if (error == 'SequelizeUniqueConstraintError: Validation error') {
-          res
-            .status(400)
-            .send('Bad request: existe otro alumno con el mismo nombre');
-        } else {
-          console.log(
-            `Error al intentar actualizar la base de datos: ${error}`
-          );
-          res.sendStatus(500);
-        }
-      });
-  encontrarAlumno(req.params.id, {
-    onSuccess,
-    onNotFound: () => res.sendStatus(404),
-    onError: () => res.sendStatus(500),
-  });
+  let errors = validationResult(req);
+  try {
+    validationResult(req).throw();
+    const onSuccess = (alumno) =>
+      alumno
+        .update(
+          { nombre: req.body.nombre, id_carrera: req.body.id_carrera },
+          { fields: ["nombre", "id_carrera"] }
+        )
+        .then(() => res.sendStatus(200))
+        .catch((error) => {
+          if (error == "SequelizeUniqueConstraintError: Validation error") {
+            res
+              .status(400)
+              .send("Bad request: existe otro alumno con el mismo nombre");
+          } else {
+            console.log(
+              `Error al intentar actualizar la base de datos: ${error}`
+            );
+            res.sendStatus(500);
+          }
+        });
+    encontrarAlumno(req.params.id, {
+      onSuccess,
+      onNotFound: () => res.status(404).send("Alumno no encontrado"),
+      onError: () => res.sendStatus(500),
+    });
+  } catch (err) {
+    res.status(400);
+    res.send(obtenerMensajeDeError(errors));
+  }
 };
 
 const eliminarAlumno = (req, res) => {
@@ -98,7 +119,7 @@ const eliminarAlumno = (req, res) => {
       .catch(() => res.sendStatus(500));
   encontrarAlumno(req.params.id, {
     onSuccess,
-    onNotFound: () => res.sendStatus(404),
+    onNotFound: () => res.status(404).send("Alumno no encontrado"),
     onError: () => res.sendStatus(500),
   });
 };

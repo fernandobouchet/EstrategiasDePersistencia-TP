@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   obtenerAlumnos,
@@ -7,18 +7,19 @@ const {
   obtenerUnAlumno,
   actualizarAlumno,
   eliminarAlumno,
-} = require('../controllers/alumnosController');
+} = require("../controllers/alumnosController");
+const { validarCamposAlumno } = require("../validators/alumnoValidators");
 
-router.get('/', obtenerAlumnos);
+router.get("/", obtenerAlumnos);
 
-router.post('/', crearAlumno);
+router.post("/", validarCamposAlumno, crearAlumno);
 
-router.get('/filtro', obtenerYFiltrarAlumnos);
+router.get("/filtro", obtenerYFiltrarAlumnos);
 
-router.get('/:id', obtenerUnAlumno);
+router.get("/:id", obtenerUnAlumno);
 
-router.put('/:id', actualizarAlumno);
+router.put("/:id", validarCamposAlumno, actualizarAlumno);
 
-router.delete('/:id', eliminarAlumno);
+router.delete("/:id", eliminarAlumno);
 
 module.exports = router;
