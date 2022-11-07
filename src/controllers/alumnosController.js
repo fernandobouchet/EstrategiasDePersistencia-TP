@@ -50,9 +50,13 @@ const crearAlumno = (req, res) => {
           res.sendStatus(500);
         }
       });
-  } catch (err) {
+  } catch (error) {
     res.status(400);
-    res.send(obtenerMensajeDeError(errors));
+    if (!errors.isEmpty()) {
+      res.send(obtenerMensajeDeError(errors));
+    } else {
+      res.send(error);
+    }
   }
 };
 
@@ -105,9 +109,13 @@ const actualizarAlumno = (req, res) => {
       onNotFound: () => res.status(404).send("Alumno no encontrado"),
       onError: () => res.sendStatus(500),
     });
-  } catch (err) {
+  } catch (error) {
     res.status(400);
-    res.send(obtenerMensajeDeError(errors));
+    if (!errors.isEmpty()) {
+      res.send(obtenerMensajeDeError(errors));
+    } else {
+      res.send(error);
+    }
   }
 };
 

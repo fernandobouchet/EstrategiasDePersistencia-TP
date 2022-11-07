@@ -1,12 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   obtenerTokenUsuario,
   crearUsuario,
-} = require('../controllers/usuariosController');
+} = require("../controllers/usuariosController");
+const { validarCamposUsuario } = require("../validators/usuariosValidator");
 
-router.get('/', obtenerTokenUsuario);
+router.get("/", validarCamposUsuario, obtenerTokenUsuario);
 
-router.post('/', crearUsuario);
+router.post("/", validarCamposUsuario, crearUsuario);
 
 module.exports = router;

@@ -1,27 +1,44 @@
-const jwt = require('jsonwebtoken');
-const models = require('../models');
+const jwt = require("jsonwebtoken");
+const models = require("../models");
+const { obtenerMensajeDeError } = require("../utils/validatorErrorUtils");
+const { validationResult } = require("express-validator");
+const { validarToken } = require("../validators/usuariosValidator");
 
-const protejer = async (req, res, next) => {
-  let token;
+const protejer = [
+  validarToken,
+  async (req, res, next) => {
+    let errors = validationResult(req);
+    let token;
 
-  if (req.headers.token) {
     try {
+      validationResult(req).throw();
       token = req.headers.token;
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      models.usuario.findOne({
-        attributes: ['id'],
-        where: { id: decoded.id },
+      let decodedToken;
+      jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
+        if (err) {
+          throw "Error: Token invalido";
+        } else {
+          decodedToken = decoded;
+        }
       });
-      next();
+      const user = await models.usuario.findOne({
+        attributes: ["id"],
+        where: { id: decodedToken.id },
+      });
+      if (user) {
+        return next();
+      } else {
+        throw "Error: No autorizado";
+      }
     } catch (error) {
       res.status(401);
-      throw new Error('Not authorized');
+      if (!errors.isEmpty()) {
+        res.send(obtenerMensajeDeError(errors));
+      } else {
+        res.send(error);
+      }
     }
-  }
-  if (!token) {
-    res.status(401);
-    throw new Error('No token');
-  }
-};
+  },
+];
 
 module.exports = { protejer };
