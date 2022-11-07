@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   crearMateria,
@@ -7,18 +7,18 @@ const {
   obtenerUnaMateria,
   actualizarMateria,
   eliminarMateria,
-} = require('../controllers/materiasController');
+} = require("../controllers/materiasController");
 
-router.get('/', obtenerMaterias);
+router.get("/", obtenerMaterias);
 
-router.post('/', crearMateria);
+router.post("/", crearMateria);
 
-router.get('/filtro', obtenerYFiltrarMaterias);
+router.get("/filtro", obtenerYFiltrarMaterias);
 
-router.get('/:id', obtenerUnaMateria);
+router.get("/:id", obtenerUnaMateria);
 
-router.put('/:id', actualizarMateria);
+router.put("/:id", actualizarMateria);
 
-router.delete('/:id', eliminarMateria);
+router.delete("/:id", eliminarMateria);
 
 module.exports = router;

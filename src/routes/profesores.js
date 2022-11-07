@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   obtenerProfesores,
@@ -7,18 +7,19 @@ const {
   actualizarProfesor,
   obtenerUnProfesor,
   obtenerYFiltrarProfesores,
-} = require('../controllers/profesoresController');
+} = require("../controllers/profesoresController");
+const { validarCamposProfesor } = require("../validators/profesorValidator");
 
-router.get('/', obtenerProfesores);
+router.get("/", obtenerProfesores);
 
-router.post('/', crearProfesor);
+router.post("/", validarCamposProfesor, crearProfesor);
 
-router.get('/filtro', obtenerYFiltrarProfesores);
+router.get("/filtro", obtenerYFiltrarProfesores);
 
-router.get('/:id', obtenerUnProfesor);
+router.get("/:id", obtenerUnProfesor);
 
-router.put('/:id', actualizarProfesor);
+router.put("/:id", validarCamposProfesor, actualizarProfesor);
 
-router.delete('/:id', eliminarProfesor);
+router.delete("/:id", eliminarProfesor);
 
 module.exports = router;
