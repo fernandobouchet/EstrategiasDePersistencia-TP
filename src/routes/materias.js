@@ -8,16 +8,17 @@ const {
   actualizarMateria,
   eliminarMateria,
 } = require("../controllers/materiasController");
+const { validarCamposMateria } = require("../validators/materiaValidator");
 
 router.get("/", obtenerMaterias);
 
-router.post("/", crearMateria);
+router.post("/", validarCamposMateria, crearMateria);
 
 router.get("/filtro", obtenerYFiltrarMaterias);
 
 router.get("/:id", obtenerUnaMateria);
 
-router.put("/:id", actualizarMateria);
+router.put("/:id", validarCamposMateria, actualizarMateria);
 
 router.delete("/:id", eliminarMateria);
 

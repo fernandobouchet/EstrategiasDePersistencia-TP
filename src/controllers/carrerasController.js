@@ -1,9 +1,11 @@
-const models = require('../models');
+const models = require("../models");
+const { validationResult } = require("express-validator");
+const { obtenerMensajeDeError } = require("../utils/validatorErrorUtils");
 
 const encontrarCarrera = (id, { onSuccess, onNotFound, onError }) => {
   models.carrera
     .findOne({
-      attributes: ['id', 'nombre'],
+      attributes: ["id", "nombre"],
       where: { id },
     })
     .then((carrera) => (carrera ? onSuccess(carrera) : onNotFound()))
@@ -13,12 +15,12 @@ const encontrarCarrera = (id, { onSuccess, onNotFound, onError }) => {
 const obtenerCarreras = (req, res) => {
   models.carrera
     .findAll({
-      attributes: ['id', 'nombre'],
+      attributes: ["id", "nombre"],
       include: [
         {
-          as: 'materias',
+          as: "materias",
           model: models.materia,
-          attributes: ['id_carrera', 'nombre'],
+          attributes: ["id_carrera", "nombre"],
         },
       ],
     })
@@ -29,24 +31,37 @@ const obtenerCarreras = (req, res) => {
 };
 
 const crearCarrera = (req, res) => {
-  models.carrera
-    .create({ nombre: req.body.nombre })
-    .then((carrera) => res.status(201).send({ id: carrera.id }))
-    .catch((error) => {
-      if (error == 'SequelizeUniqueConstraintError: Validation error') {
-        res
-          .status(400)
-          .send('Bad request: existe otra carrera con el mismo nombre');
-      } else {
-        console.log(`Error al intentar insertar en la base de datos: ${error}`);
-        res.sendStatus(500);
-      }
-    });
+  let errors = validationResult(req);
+  try {
+    validationResult(req).throw();
+    models.carrera
+      .create({ nombre: req.body.nombre })
+      .then((carrera) => res.status(201).send({ id: carrera.id }))
+      .catch((error) => {
+        if (error == "SequelizeUniqueConstraintError: Validation error") {
+          res
+            .status(400)
+            .send("Bad request: existe otra carrera con el mismo nombre");
+        } else {
+          console.log(
+            `Error al intentar insertar en la base de datos: ${error}`
+          );
+          res.sendStatus(500);
+        }
+      });
+  } catch (error) {
+    res.status(400);
+    if (!errors.isEmpty()) {
+      res.send(obtenerMensajeDeError(errors));
+    } else {
+      res.send(error);
+    }
+  }
 };
 
 const obtenerYFiltrarCarreras = (req, res) => {
-  let offset = parseInt(req.query.pagActual);
-  let limit = parseInt(req.query.cantAVer);
+  let offset = parseInt(req.query.pagActual) || 0;
+  let limit = parseInt(req.query.cantAVer) || 10;
 
   models.carrera
     .findAll({
@@ -60,33 +75,45 @@ const obtenerYFiltrarCarreras = (req, res) => {
 const obtenerUnaCarrera = (req, res) => {
   encontrarCarrera(req.params.id, {
     onSuccess: (carrera) => res.send(carrera),
-    onNotFound: () => res.sendStatus(404),
+    onNotFound: () => res.status(404).send("Carrera no encontrada"),
     onError: () => res.sendStatus(500),
   });
 };
 
 const actualizarCarrera = (req, res) => {
-  const onSuccess = (carrera) =>
-    carrera
-      .update({ nombre: req.body.nombre }, { fields: ['nombre'] })
-      .then(() => res.sendStatus(200))
-      .catch((error) => {
-        if (error == 'SequelizeUniqueConstraintError: Validation error') {
-          res
-            .status(400)
-            .send('Bad request: existe otra carrera con el mismo nombre');
-        } else {
-          console.log(
-            `Error al intentar actualizar la base de datos: ${error}`
-          );
-          res.sendStatus(500);
-        }
-      });
-  encontrarCarrera(req.params.id, {
-    onSuccess,
-    onNotFound: () => res.sendStatus(404),
-    onError: () => res.sendStatus(500),
-  });
+  let errors = validationResult(req);
+
+  try {
+    validationResult(req).throw();
+    const onSuccess = (carrera) =>
+      carrera
+        .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
+        .then(() => res.sendStatus(200))
+        .catch((error) => {
+          if (error == "SequelizeUniqueConstraintError: Validation error") {
+            res
+              .status(400)
+              .send("Bad request: existe otra carrera con el mismo nombre");
+          } else {
+            console.log(
+              `Error al intentar actualizar la base de datos: ${error}`
+            );
+            res.sendStatus(500);
+          }
+        });
+    encontrarCarrera(req.params.id, {
+      onSuccess,
+      onNotFound: () => res.status(404).send("Carrera no encontrada"),
+      onError: () => res.sendStatus(500),
+    });
+  } catch (error) {
+    res.status(400);
+    if (!errors.isEmpty()) {
+      res.send(obtenerMensajeDeError(errors));
+    } else {
+      res.send(error);
+    }
+  }
 };
 
 const eliminarCarrera = (req, res) => {
@@ -97,7 +124,7 @@ const eliminarCarrera = (req, res) => {
       .catch(() => res.sendStatus(500));
   encontrarCarrera(req.params.id, {
     onSuccess,
-    onNotFound: () => res.sendStatus(404),
+    onNotFound: () => res.status(404).send("Carrera no encontrada"),
     onError: () => res.sendStatus(500),
   });
 };

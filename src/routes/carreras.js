@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   obtenerCarreras,
@@ -7,18 +7,19 @@ const {
   obtenerUnaCarrera,
   actualizarCarrera,
   eliminarCarrera,
-} = require('../controllers/carrerasController');
+} = require("../controllers/carrerasController");
+const { validarCampoCarrera } = require("../validators/carreraValidator");
 
-router.get('/', obtenerCarreras);
+router.get("/", obtenerCarreras);
 
-router.post('/', crearCarrera);
+router.post("/", validarCampoCarrera, crearCarrera);
 
-router.get('/filtro', obtenerYFiltrarCarreras);
+router.get("/filtro", obtenerYFiltrarCarreras);
 
-router.get('/:id', obtenerUnaCarrera);
+router.get("/:id", obtenerUnaCarrera);
 
-router.put('/:id', actualizarCarrera);
+router.put("/:id", validarCampoCarrera, actualizarCarrera);
 
-router.delete('/:id', eliminarCarrera);
+router.delete("/:id", eliminarCarrera);
 
 module.exports = router;
