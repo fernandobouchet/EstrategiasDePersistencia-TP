@@ -4,13 +4,13 @@ module.exports = (sequelize, DataTypes) => {
     "profesor",
     {
       nombre: { type: DataTypes.STRING, unique: true },
-      id_materia: DataTypes.INTEGER,
+      id_carrera: DataTypes.INTEGER,
     },
     {}
   );
   profesor.associate = function (models) {
-    profesor.hasMany(models.materia, {
-      as: "materias",
+    profesor.belongsTo(models.carrera, {
+      as: "carrera",
       foreignKey: "id_carrera",
     });
   };

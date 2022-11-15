@@ -22,6 +22,14 @@ const obtenerAlumnos = (req, res) => {
           model: models.carrera,
           attributes: ["nombre"],
         },
+        {
+          as: "materias",
+          model: models.materia,
+          attributes: ["id", "nombre", "id_profesor"],
+          through: {
+            attributes: ["id_alumno", "id_materia"],
+          },
+        },
       ],
     })
     .then((alumnos) => res.send(alumnos))

@@ -8,8 +8,12 @@ module.exports = (sequelize, DataTypes) => {
     {}
   );
   carrera.associate = function (models) {
-    carrera.hasMany(models.materia, {
-      as: "materias",
+    carrera.hasMany(models.profesor, {
+      as: "profesor",
+      foreignKey: "id_carrera",
+    });
+    carrera.hasMany(models.alumno, {
+      as: "alumnos",
       foreignKey: "id_carrera",
     });
   };

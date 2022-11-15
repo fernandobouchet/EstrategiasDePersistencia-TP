@@ -15,12 +15,20 @@ const encontrarMateria = (id, { onSuccess, onNotFound, onError }) => {
 const obtenerMaterias = (req, res) => {
   models.materia
     .findAll({
-      attributes: ["id_carrera", "nombre"],
+      attributes: ["id", "id_profesor", "nombre"],
       include: [
         {
-          as: "Carrera",
-          model: models.carrera,
+          as: "profesor",
+          model: models.profesor,
           attributes: ["id", "nombre"],
+        },
+        {
+          as: "alumnos",
+          model: models.alumno,
+          attributes: ["id", "nombre", "id_carrera"],
+          through: {
+            attributes: ["id_alumno", "id_materia"],
+          },
         },
       ],
     })

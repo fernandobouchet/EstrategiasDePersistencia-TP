@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
       as: "carrera",
       foreignKey: "id_carrera",
     });
+    alumno.belongsToMany(models.materia, {
+      through: "alumno_materia",
+      as: "materias",
+      foreignKey: "id_alumno",
+    });
   };
   return alumno;
 };

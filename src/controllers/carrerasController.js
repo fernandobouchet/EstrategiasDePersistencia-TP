@@ -18,8 +18,13 @@ const obtenerCarreras = (req, res) => {
       attributes: ["id", "nombre"],
       include: [
         {
-          as: "materias",
-          model: models.materia,
+          as: "profesor",
+          model: models.profesor,
+          attributes: ["id_carrera", "nombre"],
+        },
+        {
+          as: "alumnos",
+          model: models.alumno,
           attributes: ["id_carrera", "nombre"],
         },
       ],

@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
       },
-      id_carrera: {
+      id_profesor: {
         type: Sequelize.INTEGER,
       },
       createdAt: {
