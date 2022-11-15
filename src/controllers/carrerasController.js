@@ -6,6 +6,18 @@ const encontrarCarrera = (id, { onSuccess, onNotFound, onError }) => {
   models.carrera
     .findOne({
       attributes: ["id", "nombre"],
+      include: [
+        {
+          as: "profesor",
+          model: models.profesor,
+          attributes: ["id_carrera", "nombre"],
+        },
+        {
+          as: "alumnos",
+          model: models.alumno,
+          attributes: ["id_carrera", "nombre"],
+        },
+      ],
       where: { id },
     })
     .then((carrera) => (carrera ? onSuccess(carrera) : onNotFound()))
@@ -72,6 +84,19 @@ const obtenerYFiltrarCarreras = (req, res) => {
     .findAll({
       offset: offset * limit,
       limit: limit,
+      attributes: ["id", "nombre"],
+      include: [
+        {
+          as: "profesor",
+          model: models.profesor,
+          attributes: ["id_carrera", "nombre"],
+        },
+        {
+          as: "alumnos",
+          model: models.alumno,
+          attributes: ["id_carrera", "nombre"],
+        },
+      ],
     })
     .then((carreras) => res.send(carreras))
     .catch(() => res.sendStatus(500));

@@ -6,6 +6,21 @@ const encontrarAlumno = (id, { onSuccess, onNotFound, onError }) => {
   models.alumno
     .findOne({
       attributes: ["id", "nombre", "id_carrera"],
+      include: [
+        {
+          as: "carrera",
+          model: models.carrera,
+          attributes: ["nombre"],
+        },
+        {
+          as: "materias",
+          model: models.materia,
+          attributes: ["id", "nombre", "id_profesor"],
+          through: {
+            attributes: ["id_alumno", "id_materia"],
+          },
+        },
+      ],
       where: { id: id },
     })
     .then((alumno) => (alumno ? onSuccess(alumno) : onNotFound()))
@@ -20,7 +35,7 @@ const obtenerAlumnos = (req, res) => {
         {
           as: "carrera",
           model: models.carrera,
-          attributes: ["nombre"],
+          attributes: ["id", "nombre"],
         },
         {
           as: "materias",
@@ -76,6 +91,22 @@ const obtenerYFiltrarAlumnos = (req, res) => {
     .findAll({
       offset: offset * limit,
       limit: limit,
+      attributes: ["id", "id_carrera", "nombre"],
+      include: [
+        {
+          as: "carrera",
+          model: models.carrera,
+          attributes: ["nombre"],
+        },
+        {
+          as: "materias",
+          model: models.materia,
+          attributes: ["id", "nombre", "id_profesor"],
+          through: {
+            attributes: ["id_alumno", "id_materia"],
+          },
+        },
+      ],
     })
     .then((alumnos) => res.send(alumnos))
     .catch(() => res.sendStatus(500));

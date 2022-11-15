@@ -6,6 +6,21 @@ const encontrarMateria = (id, { onSuccess, onNotFound, onError }) => {
   models.materia
     .findOne({
       attributes: ["id", "nombre", "id_carrera"],
+      include: [
+        {
+          as: "profesor",
+          model: models.profesor,
+          attributes: ["id", "nombre"],
+        },
+        {
+          as: "alumnos",
+          model: models.alumno,
+          attributes: ["id", "nombre", "id_carrera"],
+          through: {
+            attributes: ["id_alumno", "id_materia"],
+          },
+        },
+      ],
       where: { id },
     })
     .then((materia) => (materia ? onSuccess(materia) : onNotFound()))
@@ -42,7 +57,7 @@ const crearMateria = (req, res) => {
   try {
     validationResult(req).throw();
     models.materia
-      .create({ nombre: req.body.nombre, id_carrera: req.body.id_carrera })
+      .create({ nombre: req.body.nombre, id_profesor: req.body.id_profesor })
       .then((materia) => res.status(201).send({ id: materia.id }))
       .catch((error) => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {
@@ -67,13 +82,29 @@ const crearMateria = (req, res) => {
 };
 
 const obtenerYFiltrarMaterias = (req, res) => {
-  let offset = parseInt(req.query.pagActual);
-  let limit = parseInt(req.query.cantAVer);
+  let offset = parseInt(req.query.pagActual) || 0;
+  let limit = parseInt(req.query.cantAVer) || 10;
 
   models.materia
     .findAll({
       offset: offset * limit,
       limit: limit,
+      attributes: ["id", "id_profesor", "nombre"],
+      include: [
+        {
+          as: "profesor",
+          model: models.profesor,
+          attributes: ["id", "nombre"],
+        },
+        {
+          as: "alumnos",
+          model: models.alumno,
+          attributes: ["id", "nombre", "id_carrera"],
+          through: {
+            attributes: ["id_alumno", "id_materia"],
+          },
+        },
+      ],
     })
     .then((materias) => res.send(materias))
     .catch(() => res.sendStatus(500));
@@ -96,8 +127,8 @@ const actualizarMateria = (req, res) => {
     const onSuccess = (materia) =>
       materia
         .update(
-          { nombre: req.body.nombre },
-          { fields: ["nombre", "id_carrera"] }
+          { nombre: req.body.nombre, id_profesor: req.body.id_profesor },
+          { fields: ["nombre", "id_profesor"] }
         )
         .then(() => res.sendStatus(200))
         .catch((error) => {

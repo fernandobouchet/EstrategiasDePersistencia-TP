@@ -5,7 +5,14 @@ const { obtenerMensajeDeError } = require("../utils/validatorErrorUtils");
 const encontrarProfesor = (idProfesor, { onSuccess, onNotFound, onError }) => {
   models.profesor
     .findOne({
-      attributes: ["id", "nombre", "id_materia"],
+      attributes: ["id", "id_carrera", "nombre"],
+      include: [
+        {
+          as: "carrera",
+          model: models.carrera,
+          attributes: ["id", "nombre"],
+        },
+      ],
       where: { id: idProfesor },
     })
     .then((profesor) => (profesor ? onSuccess(profesor) : onNotFound()))
@@ -36,6 +43,14 @@ const obtenerYFiltrarProfesores = (req, res) => {
     .findAll({
       offset: offset * limit,
       limit: limit,
+      attributes: ["id", "id_carrera", "nombre"],
+      include: [
+        {
+          as: "carrera",
+          model: models.carrera,
+          attributes: ["id", "nombre"],
+        },
+      ],
     })
     .then((profesores) => res.send(profesores))
     .catch(() => res.sendStatus(500));
@@ -57,7 +72,7 @@ const crearProfesor = (req, res) => {
     models.profesor
       .create({
         nombre: req.body.nombre,
-        id_materia: req.body.id_materia,
+        id_carrera: req.body.id_carrera,
       })
       .then((profesor) => res.status(201).send({ id: profesor.id }))
       .catch((error) => {
@@ -89,8 +104,8 @@ const actualizarProfesor = (req, res) => {
     const onSuccess = (profesor) =>
       profesor
         .update(
-          { nombre: req.body.nombre, id_materia: req.body.id_materia },
-          { fields: ["nombre", "id_materia"] }
+          { nombre: req.body.nombre, id_carrera: req.body.id_carrera },
+          { fields: ["nombre", "id_carrera"] }
         )
         .then(() => res.sendStatus(200))
         .catch((error) => {
