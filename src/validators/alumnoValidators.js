@@ -12,17 +12,17 @@ const validarCamposAlumno = [
     .isString()
     .withMessage("Alumno: El valor de 'nombre' debe ser de tipo string")
     .bail(),
-  body("id_carrera")
+  body("id_materia")
     .exists()
-    .withMessage("Alumno: Falta ingresar el campo de 'id_carrera'")
+    .withMessage("Alumno: Falta ingresar el campo de 'id_materia'")
     .bail()
     .not()
     .isEmpty()
-    .withMessage("Alumno: El campo 'id_carrera' se encuentra vacio")
+    .withMessage("Alumno: El campo 'id_materia' se encuentra vacio")
     .bail()
     .isInt()
     .withMessage(
-      "Alumno: El valor de 'id_carrera' debe ser un número de tipo entero"
+      "Alumno: El valor de 'id_materia' debe ser un número de tipo entero"
     ),
 ];
 

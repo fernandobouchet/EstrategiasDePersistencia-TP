@@ -5,7 +5,7 @@ const { obtenerMensajeDeError } = require("../utils/validatorErrorUtils");
 const encontrarMateria = (id, { onSuccess, onNotFound, onError }) => {
   models.materia
     .findOne({
-      attributes: ["id", "nombre", "id_carrera"],
+      attributes: ["id", "nombre", "id_profesor"],
       include: [
         {
           as: "profesor",
