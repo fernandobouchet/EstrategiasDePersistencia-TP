@@ -22,6 +22,7 @@ app.use("/carrera", protejer, require("./routes/carreras"));
 app.use("/materia", protejer, require("./routes/materias"));
 app.use("/alumno", protejer, require("./routes/alumnos"));
 app.use("/profesor", protejer, require("./routes/profesores"));
+app.use("/alumno_materia", protejer, require("./routes/alumnos_materias"));
 app.use("/usuario", require("./routes/usuarios"));
 
 // catch 404 and forward to error handler
