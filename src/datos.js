@@ -249,7 +249,7 @@ sequelize.sync().then(() =>
         id_alumno: 3,
       },
       {
-        id_materia: 5,
+        id_materia: 4,
         id_alumno: 4,
       },
       {
@@ -257,27 +257,27 @@ sequelize.sync().then(() =>
         id_alumno: 5,
       },
       {
-        id_materia: 6,
+        id_materia: 11,
         id_alumno: 6,
       },
       {
-        id_materia: 10,
+        id_materia: 1,
         id_alumno: 7,
       },
       {
-        id_materia: 11,
+        id_materia: 10,
         id_alumno: 9,
       },
       {
-        id_materia: 4,
+        id_materia: 2,
         id_alumno: 8,
       },
       {
-        id_materia: 3,
+        id_materia: 5,
         id_alumno: 10,
       },
       {
-        id_materia: 2,
+        id_materia: 10,
         id_alumno: 11,
       },
     ])
